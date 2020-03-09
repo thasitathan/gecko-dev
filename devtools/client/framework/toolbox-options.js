@@ -196,7 +196,9 @@ OptionsPanel.prototype = {
     };
 
     const createCommandCheckbox = button => {
-      const checkboxLabel = this.panelDoc.createElement("label");
+      // changed element created from label to div
+      // to correct bug allowing you to click on entire row
+      const checkboxLabel = this.panelDoc.createElement("div");
       const checkboxSpanLabel = this.panelDoc.createElement("span");
       checkboxSpanLabel.textContent = button.description;
       const checkboxInput = this.panelDoc.createElement("input");
@@ -258,7 +260,9 @@ OptionsPanel.prototype = {
     };
 
     const createToolCheckbox = tool => {
-      const checkboxLabel = this.panelDoc.createElement("label");
+      // changed element created from label to div
+      // to correct bug allowing you to click on entire row
+      const checkboxLabel = this.panelDoc.createElement("div");
       const checkboxInput = this.panelDoc.createElement("input");
       checkboxInput.setAttribute("type", "checkbox");
       checkboxInput.setAttribute("id", tool.id);
@@ -310,7 +314,7 @@ OptionsPanel.prototype = {
     };
 
     // Clean up any existent default tools content.
-    for (const label of defaultToolsBox.querySelectorAll("label")) {
+    for (const label of defaultToolsBox.querySelectorAll("div")) {
       label.remove();
     }
 
@@ -330,7 +334,7 @@ OptionsPanel.prototype = {
     defaultToolsBox.insertBefore(fragment, toolsNotSupportedLabelNode);
 
     // Clean up any existent additional tools content.
-    for (const label of additionalToolsBox.querySelectorAll("label")) {
+    for (const label of additionalToolsBox.querySelectorAll("div")) {
       label.remove();
     }
 
