@@ -70,6 +70,9 @@ class Frame extends Component {
     super(props);
     this._locationChanged = this._locationChanged.bind(this);
     this.getSourceForClick = this.getSourceForClick.bind(this);
+    this.frameAndSourceMapped = this.frameAndSourceMapped.bind(this);
+    this.showFunctionNameHelper = this.showFunctionNameHelper.bind(this);
+    this.setDisplaySource = this.setDisplaySource.bind(this);
   }
 
   componentWillMount() {
@@ -123,20 +126,57 @@ class Frame extends Component {
     };
   }
 
-  // eslint-disable-next-line complexity
+  showFunctionNameHelper(frame, elements) {
+    const { showFunctionName, showAnonymousFunctionName } = this.props;
+    if (showFunctionName) {
+      let functionDisplayName = frame.functionDisplayName;
+      if (!functionDisplayName && showAnonymousFunctionName) {
+        functionDisplayName = webl10n.getStr("stacktrace.anonymousFunction");
+      }
+
+      if (functionDisplayName) {
+        elements.push(
+          dom.span(
+            {
+              key: "function-display-name",
+              className: "frame-link-function-display-name",
+            },
+            functionDisplayName
+          ),
+          " "
+        );
+      }
+    }
+  }
+
+  setDisplaySource(unicodeLong, unicodeShort, isSourceMapped, host) {
+    const { showEmptyPathAsHost, showFullSourceUrl } = this.props;
+
+    let displaySource = showFullSourceUrl ? unicodeLong : unicodeShort;
+    if (isSourceMapped) {
+      displaySource = getSourceMappedFile(displaySource);
+    } else if (
+      showEmptyPathAsHost &&
+      (displaySource === "" || displaySource === "/")
+    ) {
+      displaySource = host;
+    }
+    return displaySource;
+  }
+
+  frameAndSourceMapped(state) {
+    if (state && state.isSourceMapped && state.frame) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     let frame, isSourceMapped;
-    const {
-      onClick,
-      showFunctionName,
-      showAnonymousFunctionName,
-      showHost,
-      showEmptyPathAsHost,
-      showFullSourceUrl,
-      messageSource,
-    } = this.props;
+    const { onClick, showHost, showFullSourceUrl, messageSource } = this.props;
 
-    if (this.state && this.state.isSourceMapped && this.state.frame) {
+    const frameMapping = this.frameAndSourceMapped(this.state);
+    if (frameMapping) {
       frame = this.state.frame;
       isSourceMapped = this.state.isSourceMapped;
     } else {
@@ -179,35 +219,15 @@ class Frame extends Component {
       className: "frame-link",
     };
 
-    if (showFunctionName) {
-      let functionDisplayName = frame.functionDisplayName;
-      if (!functionDisplayName && showAnonymousFunctionName) {
-        functionDisplayName = webl10n.getStr("stacktrace.anonymousFunction");
-      }
-
-      if (functionDisplayName) {
-        elements.push(
-          dom.span(
-            {
-              key: "function-display-name",
-              className: "frame-link-function-display-name",
-            },
-            functionDisplayName
-          ),
-          " "
-        );
-      }
-    }
+    this.showFunctionNameHelper(frame, elements);
 
     let displaySource = showFullSourceUrl ? unicodeLong : unicodeShort;
-    if (isSourceMapped) {
-      displaySource = getSourceMappedFile(displaySource);
-    } else if (
-      showEmptyPathAsHost &&
-      (displaySource === "" || displaySource === "/")
-    ) {
-      displaySource = host;
-    }
+    displaySource = this.setDisplaySource(
+      unicodeLong,
+      unicodeShort,
+      isSourceMapped,
+      host
+    );
 
     sourceElements.push(
       dom.span(
