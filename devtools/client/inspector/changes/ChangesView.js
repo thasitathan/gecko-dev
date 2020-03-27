@@ -246,7 +246,9 @@ class ChangesView {
   }
 
   onSheetChange() {
-    alert("IT WORKED");
+    alert(
+      "Stylesheet(s) have been modified. Please save any changes in Style Editor, otherwise they may be lost"
+    );
   }
 
   /**
