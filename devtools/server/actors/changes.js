@@ -27,11 +27,14 @@ const ChangesActor = protocol.ActorClassWithSpec(changesSpec, {
 
     this.onTrackChange = this.pushChange.bind(this);
     this.onWillNavigate = this.onWillNavigate.bind(this);
+    this.styleSheetChanged = this.styleSheetChanged.bind(this);
 
     TrackChangeEmitter.on("track-change", this.onTrackChange);
     this.targetActor.on("will-navigate", this.onWillNavigate);
+    this.targetActor.on("stylesheet-added", this.styleSheetChanged);
 
     this.changes = [];
+    this.sheetChanges = [];
   },
 
   destroy: function() {
@@ -93,6 +96,24 @@ const ChangesActor = protocol.ActorClassWithSpec(changesSpec, {
   onWillNavigate: function(eventData) {
     if (eventData.isTopLevel) {
       this.clearChanges();
+      this.sheetChanges = [];
+    }
+  },
+
+  /**
+   * Handler for "stylesheet-added" event from the browsing context
+   *
+   * @param {*} sheet
+   */
+  styleSheetChanged: function(sheet) {
+    if (sheet.href != null) {
+      const substring = sheet.href.split("?cssReloader");
+      if (this.sheetChanges.includes(substring[0])) {
+        console.log("Changed Stylesheet");
+        this.emit("changed-sheet");
+      } else {
+        this.sheetChanges.push(substring[0]);
+      }
     }
   },
 
