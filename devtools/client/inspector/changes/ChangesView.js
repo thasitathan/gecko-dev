@@ -76,7 +76,6 @@ class ChangesView {
   }
 
   init() {
-    console.log("here");
     const changesApp = ChangesApp({
       onContextMenu: this.onContextMenu,
       onCopyAllChanges: this.onCopyAllChanges,
@@ -244,7 +243,6 @@ class ChangesView {
 
   onClearChanges() {
     this.store.dispatch(resetChanges());
-    console.log("here");
   }
 
   onSheetChange() {

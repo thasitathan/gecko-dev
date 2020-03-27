@@ -15,7 +15,8 @@ const changesSpec = generateActorSpec({
       change: Arg(0, "json"),
     },
     "changed-sheet": {
-      type: "addChange",
+      type: "sheetChange",
+      change: Arg(0, "json"),
     },
     "remove-change": {
       type: "removeChange",

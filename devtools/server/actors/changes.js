@@ -110,7 +110,7 @@ const ChangesActor = protocol.ActorClassWithSpec(changesSpec, {
       const substring = sheet.href.split("?cssReloader");
       if (this.sheetChanges.includes(substring[0])) {
         console.log("Changed Stylesheet");
-        this.emit("changed-sheet");
+        this.emit("changed-sheet", this.sheetChanges);
       } else {
         this.sheetChanges.push(substring[0]);
       }
