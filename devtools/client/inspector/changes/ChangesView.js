@@ -245,6 +245,11 @@ class ChangesView {
     this.store.dispatch(resetChanges());
   }
 
+  /**
+   * Handler for the "changedSheet" event that is emitted
+   * when a stylesheet is changed and the user is working
+   * on it
+   */
   onSheetChange() {
     alert(
       "Stylesheet(s) have been modified. Please save any changes in Style Editor, otherwise they may be lost"

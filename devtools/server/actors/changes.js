@@ -27,13 +27,16 @@ const ChangesActor = protocol.ActorClassWithSpec(changesSpec, {
 
     this.onTrackChange = this.pushChange.bind(this);
     this.onWillNavigate = this.onWillNavigate.bind(this);
+    // Bind the new handler
     this.styleSheetChanged = this.styleSheetChanged.bind(this);
 
     TrackChangeEmitter.on("track-change", this.onTrackChange);
     this.targetActor.on("will-navigate", this.onWillNavigate);
+    // Listen for the event when a stylesheet is added
     this.targetActor.on("stylesheet-added", this.styleSheetChanged);
 
     this.changes = [];
+    // New list to watch for any stylesheet changes
     this.sheetChanges = [];
   },
 
@@ -101,15 +104,21 @@ const ChangesActor = protocol.ActorClassWithSpec(changesSpec, {
   },
 
   /**
-   * Handler for "stylesheet-added" event from the browsing context
-   *
+   * Handler for "stylesheet-added" event from the browsing context. Emits
+   * an event to the client to alert user
+   * 
    * @param {*} sheet
    */
   styleSheetChanged: function(sheet) {
+    // If the sheet is not null, then that means there are stylesheets that
+    // the user can work on
     if (sheet.href != null) {
+      // Split the list names to not include cssReloader if the extension is
+      // being used
       const substring = sheet.href.split("?cssReloader");
+      // Check if the stylesheet has been changed, if so emit the event otherwise
+      // add it to the list to watch for changes
       if (this.sheetChanges.includes(substring[0])) {
-        console.log("Changed Stylesheet");
         this.emit("changed-sheet", this.sheetChanges);
       } else {
         this.sheetChanges.push(substring[0]);
