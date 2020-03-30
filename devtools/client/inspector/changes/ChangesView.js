@@ -252,7 +252,7 @@ class ChangesView {
    */
   onSheetChange() {
     alert(
-      "Stylesheet(s) have been modified. Please save any changes in Style Editor, otherwise they may be lost"
+      "New Stylesheet loaded, user stylesheet changes are no longer used. Please save any changes in Style Editor, otherwise they may be lost"
     );
   }
 
