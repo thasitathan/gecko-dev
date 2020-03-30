@@ -49,6 +49,7 @@ class ChangesView {
     this.onCopyDeclaration = this.copyDeclaration.bind(this);
     this.onCopyRule = this.copyRule.bind(this);
     this.onClearChanges = this.onClearChanges.bind(this);
+    this.onSheetChange = this.onSheetChange.bind(this);
     this.onSelectAll = this.onSelectAll.bind(this);
     this.onTargetAvailable = this.onTargetAvailable.bind(this);
     this.onTargetDestroyed = this.onTargetDestroyed.bind(this);
@@ -102,6 +103,7 @@ class ChangesView {
   async onChangesFrontAvailable(changesFront) {
     changesFront.on("add-change", this.onAddChange);
     changesFront.on("clear-changes", this.onClearChanges);
+    changesFront.on("changed-sheet", this.onSheetChange);
     try {
       // Get all changes collected up to this point by the ChangesActor on the server,
       // then push them to the Redux store here on the client.
@@ -120,6 +122,7 @@ class ChangesView {
   async onChangesFrontDestroyed(changesFront) {
     changesFront.off("add-change", this.onAddChange);
     changesFront.off("clear-changes", this.onClearChanges);
+    changesFront.off("changed-sheet", this.onSheetChange);
   }
 
   async onTargetAvailable({ type, targetFront, isTopLevel }) {
@@ -240,6 +243,17 @@ class ChangesView {
 
   onClearChanges() {
     this.store.dispatch(resetChanges());
+  }
+
+  /**
+   * Handler for the "changedSheet" event that is emitted
+   * when a stylesheet is changed and the user is working
+   * on it
+   */
+  onSheetChange() {
+    alert(
+      "New Stylesheet loaded, user stylesheet changes are no longer used. Please save any changes in Style Editor, otherwise they may be lost"
+    );
   }
 
   /**
