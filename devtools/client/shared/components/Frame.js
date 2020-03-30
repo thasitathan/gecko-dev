@@ -172,7 +172,6 @@ class Frame extends Component {
   }
 
   render() {
-    
     let frame, isSourceMapped;
     const { onClick, showHost, showFullSourceUrl, messageSource } = this.props;
 
